@@ -7,8 +7,8 @@ const commentSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        required: true,
         default: Date.now(),
+        required: true,
     },
     owner: {
         type: mongoose.Types.ObjectId,
