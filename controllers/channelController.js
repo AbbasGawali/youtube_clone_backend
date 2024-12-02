@@ -31,8 +31,13 @@ export const createChannel = async (req, res) => {
         if (!ownerMatch) {
             return res.status(403).json({ success: false, message: "invalid credentials" });
         }
-        const video = await Channel.create({ channelName, owner, description, channelLogo, channelBanner });
-        res.status(201).json({ success: true, message: "channel created", video });
+        const channel = await Channel.create({ channelName, owner, description, channelLogo, channelBanner });
+        // populate user and update channel in user model to added channel 
+
+        console.log("owner match ", ownerMatch)
+        ownerMatch.channel.push(channel._id);
+        await ownerMatch.save();
+        res.status(201).json({ success: true, message: "channel created", channel });
 
     } catch (err) {
         console.log(err)
@@ -103,6 +108,7 @@ export const deleteChannel = async (req, res) => {
             return res.status(403).json({ success: false, message: "unauthorised access" })
         }
         const result = await Channel.findByIdAndDelete(cId);
+        await User.findByIdAndUpdate(userId, { $pull: { channel: cId } });
 
         res.status(200).json({ success: true, message: "channel deleted successfully", channel: result })
     } catch (err) {

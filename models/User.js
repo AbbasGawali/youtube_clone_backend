@@ -20,11 +20,10 @@ const UserSchema = new mongoose.Schema({
     },
 
     // check it todo for multiple channels
-    channel: {
-        default: null, 
+    channel: [{
         type: mongoose.Types.ObjectId,
         ref: "Channel",
-    }
+    }]
 }, { timestamps: true })
 
 const User = mongoose.model("User", UserSchema);
