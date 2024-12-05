@@ -71,9 +71,11 @@ export const getSingleVideo = async (req, res) => {
 
     try {
         const result = await Video.findById(id);
+
         if (!result) {
             return res.status(404).json({ success: false, message: "video not found" });
         }
+        await Video.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
         res.status(200).json({ success: true, video: result })
     } catch (err) {
         console.log(err);
@@ -89,7 +91,7 @@ export const getSingleChannelVideos = async (req, res) => {
         if (!result || result.length < 1) {
             return res.status(404).json({ success: false, message: "videos not found" });
         }
-        res.status(200).json({ success: true, video: result })
+        res.status(200).json({ success: true, videos: result })
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "server error occured" });
@@ -140,7 +142,7 @@ export const deleteVideo = async (req, res) => {
 
         const result = await Video.findByIdAndDelete(vId);
         await Channel.findByIdAndUpdate(cId, { $pull: { videos: vId } });
- 
+
         res.status(200).json({ success: true, message: "video deleted successfully", video: result })
     } catch (err) {
         console.log(err);

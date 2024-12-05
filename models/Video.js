@@ -38,6 +38,10 @@ const videoSchema = new mongoose.Schema({
         default: 0,
         required: true,
     },
+    views: {
+        type: Number,
+        default: 1000,
+    },
     uploadedDate: {
         type: Date,
         default: Date.now(),

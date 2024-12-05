@@ -6,10 +6,12 @@ import userRoutes from "./routes/userRoutes.js"
 import channelRoutes from "./routes/channelRoutes.js"
 import videoRoutes from "./routes/videoRoutes.js"
 import commentRoutes from "./routes/commentRoutes.js"
+import cors from "cors"
 const app = express();
 const port = process.env.PORT || 8000;
 
 // middleware usage
+app.use(cors())
 app.use(express.json());
 app.use("/api/users", userRoutes)
 app.use("/api/channel", channelRoutes)

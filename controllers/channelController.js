@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Channel from "../models/Channel.js";
 import User from "../models/User.js";
 
@@ -31,6 +32,9 @@ export const createChannel = async (req, res) => {
         if (!ownerMatch) {
             return res.status(403).json({ success: false, message: "invalid credentials" });
         }
+        if (ownerMatch.channel.length >= 1) {
+            return res.status(400).json({ success: false, message: "user can only have 1 channel with 1 email" });
+        }
         const channel = await Channel.create({ channelName, owner, description, channelLogo, channelBanner });
         // populate user and update channel in user model to added channel 
 
@@ -60,14 +64,55 @@ export const getAllChannels = async (req, res) => {
 }
 
 export const getSpecificChannel = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid object id" });
+    }
+
     const id = req.params.id;
     console.log(id)
     try {
         const result = await Channel.findById(id);
         if (!result || result.length < 1) {
+            return res.status(404).json({ success: false, message: "channel not found" });
+        }
+        res.status(200).json({ success: true, channel: result })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
+
+
+export const getmultipleChannels = async (req, res) => {
+
+    if (!req.body.channel) {
+        return res.status(400).json({ success: false, message: "channel ids is required" });
+    }
+    const ids = req.body.channel;
+
+    console.log("ids", ids)
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ success: false, message: "Invalid channel IDs array" });
+    }
+    console.log(ids);
+
+
+    let objectIds = ids.filter((item) => mongoose.isValidObjectId(item)).map((item) => new mongoose.Types.ObjectId(item));
+
+    if (objectIds.length <= 0) {
+        return res.status(400).json({ success: false, message: "invalid channel" });
+    }
+    try {
+
+        const result = await Channel.find({ _id: { $in: objectIds } });
+        console.log(result)
+
+        if (result.length < 1) {
             return res.status(404).json({ success: false, message: "channels not found" });
         }
-        res.status(200).json({ success: true, channels: result })
+        res.status(200).json({ success: true, channels: result, message: result.length < 1 ? "no channels found" : "channels found" })
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "server error occured" });

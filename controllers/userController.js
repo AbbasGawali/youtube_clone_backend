@@ -14,6 +14,19 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ success: false, message: "server error occured" });
     }
 }
+export const getsingleUser = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await User.findById(id);
+        if (!result) {
+            return res.status(404).json({ success: false, message: "user not found" });
+        }
+        res.status(200).json({ success: true, user: result })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
 
 
 export const signUp = async (req, res) => {
@@ -56,19 +69,22 @@ export const logIn = async (req, res) => {
     if (!req.body.password) {
         return res.status(400).json({ success: false, message: "password is required" });
     }
+
     const { email, password } = req.body;
     try {
         const result = await User.findOne({ email });
-        const passMatch = bcrypt.compare(password, result.password);
-
         if (!result) {
             return res.status(404).json({ success: false, message: "user not found" });
         }
+
+        const passMatch = await bcrypt.compare(password, result.password);
+
         if (!passMatch) {
             return res.status(403).json({ success: false, message: "invalid password" });
-        } 
-        
-        const jwtToken = jwt.sign(email, process.env.JWTSECRET)
+        }
+
+        console.log(passMatch)
+        const jwtToken = jwt.sign({ email, userId: result._id }, process.env.JWTSECRET)
         return res.status(200).json({ success: true, message: "login success", user: result, jwtToken });
 
     } catch (err) {

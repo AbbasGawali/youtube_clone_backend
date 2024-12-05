@@ -10,6 +10,7 @@ const checkAuth = (req, res, next) => {
     try {
         const isTokenValid = jwt.verify(token, process.env.JWTSECRET);
         console.log("isTokenValid", isTokenValid);
+        req.user = isTokenValid;
     } catch (err) {
         return res.status(403).json({ success: false, message: "Invalid jwt token" })
     }
