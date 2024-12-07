@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Channel from "../models/Channel.js";
 import User from "../models/User.js";
 import Video from "../models/Video.js";
@@ -67,6 +68,9 @@ export const getAllVideos = async (req, res) => {
 }
 
 export const getSingleVideo = async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
     const id = req.params.id;
 
     try {
@@ -84,6 +88,11 @@ export const getSingleVideo = async (req, res) => {
 }
 
 export const getSingleChannelVideos = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+
     const cId = req.params.id;
 
     try {
@@ -103,6 +112,18 @@ export const getSingleChannelVideos = async (req, res) => {
 
 
 export const updateVideo = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.cId)) {
+        return res.status(404).json({ success: false, message: "invalid channel" });
+    }
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const vId = req.params.id;
     const cId = req.params.cId;
     const userId = req.params.uId;
@@ -126,6 +147,17 @@ export const updateVideo = async (req, res) => {
 }
 
 export const deleteVideo = async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.cId)) {
+        return res.status(404).json({ success: false, message: "invalid channel" });
+    }
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const vId = req.params.id;
     const cId = req.params.cId;
     const userId = req.params.uId;

@@ -120,6 +120,15 @@ export const getmultipleChannels = async (req, res) => {
 }
 
 export const updateChannel = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid channel" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const cId = req.params.id;
     const userId = req.params.uId;
     try {
@@ -142,6 +151,15 @@ export const updateChannel = async (req, res) => {
 }
 
 export const deleteChannel = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid channel" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const cId = req.params.id;
     const userId = req.params.uId;
     try {

@@ -56,6 +56,11 @@ export const getAllComments = async (req, res) => {
 }
 
 export const getSingleComment = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+
     const id = req.params.id;
 
     try {
@@ -71,6 +76,11 @@ export const getSingleComment = async (req, res) => {
 }
 
 export const getSingleVideoComments = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid comment" });
+    }
+
     const vId = req.params.id;
 
     try {
@@ -90,6 +100,17 @@ export const getSingleVideoComments = async (req, res) => {
 
 
 export const updateComment = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid comment" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.vId)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
     // const vId = req.params.id;
     const cId = req.params.id;
     const userId = req.params.uId;
@@ -114,6 +135,17 @@ export const updateComment = async (req, res) => {
 }
 
 export const deleteComment = async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid comment" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.vId)) {
+        return res.status(404).json({ success: false, message: "invalid video" });
+    }
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const vId = req.params.vId;
     const cId = req.params.id;
     const userId = req.params.uId;

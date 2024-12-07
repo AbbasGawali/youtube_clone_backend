@@ -15,6 +15,11 @@ export const getAllUsers = async (req, res) => {
     }
 }
 export const getsingleUser = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(404).json({ success: false, message: "invalid user" });
+    }
+
     const id = req.params.id;
     try {
         const result = await User.findById(id);
