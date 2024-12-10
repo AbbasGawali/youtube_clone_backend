@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Comment from "../models/Comment.js";
 import User from "../models/User.js";
 import Video from "../models/Video.js";
@@ -58,7 +59,7 @@ export const getAllComments = async (req, res) => {
 export const getSingleComment = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
 
     const id = req.params.id;
@@ -78,7 +79,7 @@ export const getSingleComment = async (req, res) => {
 export const getSingleVideoComments = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid comment" });
+        return res.status(400).json({ success: false, message: "invalid comment" });
     }
 
     const vId = req.params.id;
@@ -102,14 +103,14 @@ export const getSingleVideoComments = async (req, res) => {
 export const updateComment = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid comment" });
+        return res.status(400).json({ success: false, message: "invalid comment" });
     }
 
     if (!mongoose.isValidObjectId(req.params.vId)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
     // const vId = req.params.id;
     const cId = req.params.id;
@@ -136,14 +137,14 @@ export const updateComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid comment" });
+        return res.status(400).json({ success: false, message: "invalid comment" });
     }
 
     if (!mongoose.isValidObjectId(req.params.vId)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const vId = req.params.vId;

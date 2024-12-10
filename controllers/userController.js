@@ -1,6 +1,8 @@
 import User from "../models/User.js"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -17,7 +19,7 @@ export const getAllUsers = async (req, res) => {
 export const getsingleUser = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const id = req.params.id;

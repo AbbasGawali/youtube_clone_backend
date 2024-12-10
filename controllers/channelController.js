@@ -66,7 +66,7 @@ export const getAllChannels = async (req, res) => {
 export const getSpecificChannel = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid object id" });
+        return res.status(400).json({ success: false, message: "invalid object id" });
     }
 
     const id = req.params.id;
@@ -122,11 +122,11 @@ export const getmultipleChannels = async (req, res) => {
 export const updateChannel = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid channel" });
+        return res.status(400).json({ success: false, message: "invalid channel" });
     }
 
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const cId = req.params.id;
@@ -150,14 +150,54 @@ export const updateChannel = async (req, res) => {
     }
 }
 
-export const deleteChannel = async (req, res) => {
+export const subscribeChannel = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid channel" });
+        return res.status(400).json({ success: false, message: "invalid channel" });
     }
 
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
+    }
+
+    const cId = req.params.id;
+    const userId = req.params.uId;
+
+    try {
+        const channel = await Channel.findById(cId);
+        const user = await User.findById(userId);
+        if (!channel) {
+            return res.status(404).json({ success: false, message: "channel not found" });
+        }
+        if (!user) {
+            return res.status(404).json({ success: false, message: "user not found" });
+        }
+
+        if (channel?.subscribers?.includes(userId)) {
+            channel.subscribers = channel.subscribers?.filter((item) => item.toString() !== userId)
+            user.subscriptions = user.subscriptions?.filter((item) => item.toString() !== cId)
+        } else {
+            channel?.subscribers?.push(userId);
+            user?.subscriptions?.push(cId);
+        }
+        await user.save();
+        await channel.save();
+
+        res.status(200).json({ success: true, message: "channel subscribed", user: user, channel: channel })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
+
+export const deleteChannel = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ success: false, message: "invalid channel" });
+    }
+
+    if (!mongoose.isValidObjectId(req.params.uId)) {
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const cId = req.params.id;

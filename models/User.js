@@ -18,8 +18,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    subscriptions: [{
+        type: mongoose.Types.ObjectId,
+        ref: "Channel",
+    }],
 
-    // check it todo for multiple channels
     channel: [{
         type: mongoose.Types.ObjectId,
         ref: "Channel",

@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema({
@@ -19,28 +18,41 @@ const videoSchema = new mongoose.Schema({
         required: true,
     },
     channelId: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Channel",
         required: true,
     },
     uploader: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
-    likes: {
-        type: Number,
-        default: 0,
-        required: true,
-    },
-    disLikes: {
-        type: Number,
-        default: 0,
-        required: true,
-    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
+    dislikes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
     views: {
         type: Number,
         default: 1000,
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: [
+            "songs",
+            "movies",
+            "education",
+            "infotainment",
+            "food",
+            "fashion",
+            "vlog",
+            "finance",
+            "gaming",
+        ],
     },
     uploadedDate: {
         type: Date,
@@ -48,15 +60,10 @@ const videoSchema = new mongoose.Schema({
         required: true,
     },
     comments: [{
-        type: mongoose.Types.ObjectId,
-        ref: "Comments",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comments"
     }],
 }, { timestamps: true });
 
 const Video = mongoose.model("Video", videoSchema);
 export default Video;
-
-
-
-
-

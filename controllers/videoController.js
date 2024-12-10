@@ -11,6 +11,9 @@ export const addVideo = async (req, res) => {
     if (!req.body.thumbnailUrl) {
         return res.status(400).json({ success: false, message: "video thumbnail is required" });
     }
+    if (!req.body.category) {
+        return res.status(400).json({ success: false, message: "video category is required" });
+    }
     if (!req.body.videoUrl) {
         return res.status(400).json({ success: false, message: "video url is required" });
     }
@@ -24,7 +27,7 @@ export const addVideo = async (req, res) => {
         return res.status(400).json({ success: false, message: "video author is required" });
     }
 
-    const { title, thumbnailUrl, videoUrl, description, channelId, uploader } = req.body;
+    const { title, thumbnailUrl, videoUrl, description, category, channelId, uploader } = req.body;
 
 
     try {
@@ -40,7 +43,7 @@ export const addVideo = async (req, res) => {
         if (channel.owner.toString() !== user._id.toString()) {
             return res.status(403).json({ success: false, message: "unauthorised access : channel & user not match" })
         }
-        const video = await Video.create({ title, thumbnailUrl, videoUrl, description, channelId, uploader });
+        const video = await Video.create({ title, thumbnailUrl, videoUrl, description, category, channelId, uploader });
 
         channel.videos.push(video._id);
         await channel.save();
@@ -67,9 +70,25 @@ export const getAllVideos = async (req, res) => {
     }
 }
 
+export const searchVideo = async (req, res) => {
+    const { searchVideo } = req.params;
+    try {
+        const result = await Video.find({
+            title: { $regex: searchVideo, $options: "i" }
+        });
+        if (!result || result.length < 1) {
+            return res.status(404).json({ success: false, message: "No video matched your search" });
+        }
+        res.status(200).json({ success: true, videos: result })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
+
 export const getSingleVideo = async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
     const id = req.params.id;
 
@@ -90,7 +109,7 @@ export const getSingleVideo = async (req, res) => {
 export const getSingleChannelVideos = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
 
     const cId = req.params.id;
@@ -108,20 +127,88 @@ export const getSingleChannelVideos = async (req, res) => {
 }
 
 
+export const likeVideo = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ success: false, message: "invalid video" });
+    }
+
+    if (!mongoose.isValidObjectId(req.body.uId)) {
+        return res.status(400).json({ success: false, message: "invalid user" });
+    }
+
+    const vId = req.params.id;
+    const userId = req.body.uId;
+    try {
+        const video = await Video.findById(vId);
+        if (!video) {
+            return res.status(404).json({ success: false, message: "video not found" });
+        }
+        video.dislikes = video?.dislikes?.filter((item) => item.toString() !== userId)
+        if (video?.likes?.includes(userId)) {
+            video.likes = video.likes.filter((item) => item.toString() !== userId);
+        } else {
+            video.likes.push(userId);
+        }
+
+        await video.save();
+        res.status(200).json({ success: true, message: "video liked", video: video })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
+
+
+export const disLikeVideo = async (req, res) => {
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ success: false, message: "invalid video" });
+    }
+
+    if (!mongoose.isValidObjectId(req.body.uId)) {
+        return res.status(400).json({ success: false, message: "invalid user" });
+    }
+
+    const vId = req.params.id;
+    const userId = req.body.uId;
+
+    try {
+        const video = await Video.findById(vId);
+        if (!video) {
+            return res.status(404).json({ success: false, message: "video not found" });
+        }
+        video.likes = video.likes.filter((item) => item.toString() !== userId)
+
+        if (video.dislikes.includes(userId)) {
+            video.dislikes = video.dislikes.filter((item) => item.toString() !== userId);
+        } else {
+
+            video.dislikes.push(userId);
+        }
+        await video.save();
+
+        res.status(200).json({ success: true, message: "video disliked", video: video })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "server error occured" });
+    }
+}
+
 
 
 
 export const updateVideo = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
 
     if (!mongoose.isValidObjectId(req.params.cId)) {
-        return res.status(404).json({ success: false, message: "invalid channel" });
+        return res.status(400).json({ success: false, message: "invalid channel" });
     }
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const vId = req.params.id;
@@ -148,14 +235,14 @@ export const updateVideo = async (req, res) => {
 
 export const deleteVideo = async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(404).json({ success: false, message: "invalid video" });
+        return res.status(400).json({ success: false, message: "invalid video" });
     }
 
     if (!mongoose.isValidObjectId(req.params.cId)) {
-        return res.status(404).json({ success: false, message: "invalid channel" });
+        return res.status(400).json({ success: false, message: "invalid channel" });
     }
     if (!mongoose.isValidObjectId(req.params.uId)) {
-        return res.status(404).json({ success: false, message: "invalid user" });
+        return res.status(400).json({ success: false, message: "invalid user" });
     }
 
     const vId = req.params.id;

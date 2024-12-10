@@ -8,7 +8,7 @@ const channelSchema = new mongoose.Schema({
     },
     owner: {
         required: true,
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
     description: {
@@ -23,16 +23,15 @@ const channelSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    subscribers: {
-        type: Number,
-        default: 0,
-        required: true,
-    },
+    subscribers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
     videos: [{
-        type: mongoose.Types.ObjectId,
-        ref: "Video",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video"
     }]
-}, { timestamps: true })
+}, { timestamps: true });
 
 const Channel = mongoose.model("Channel", channelSchema);
-export default Channel; 
+export default Channel;
