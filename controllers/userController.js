@@ -13,7 +13,7 @@ export const getAllUsers = async (req, res) => {
             return res.status(404).json({ success: false, message: "users not found" });
         }
         // Remove password from the response
-        const { password, ...userWithoutPassword } = result.toObject();
+       const { password: userPassword, ...userWithoutPassword } = result.toObject();
 
         res.status(200).json({ success: true, users: userWithoutPassword })
     } catch (err) {
@@ -38,7 +38,7 @@ export const getsingleUser = async (req, res) => {
             return res.status(404).json({ success: false, message: "user not found" });
         }
         // Remove password from the response
-        const { password, ...userWithoutPassword } = result.toObject();
+       const { password: userPassword, ...userWithoutPassword } = result.toObject();
 
         res.status(200).json({ success: true, user: userWithoutPassword })
     } catch (err) {
@@ -77,7 +77,7 @@ export const signUp = async (req, res) => {
         const result = await User.create({ userName, email, password: hashPass, avatar });
 
         // Remove password from the response
-        const { password, ...userWithoutPassword } = result.toObject();
+       const { password: userPassword, ...userWithoutPassword } = result.toObject();
 
         res.status(201).json({ success: true, message: "signUp success", user: userWithoutPassword });
     } catch (err) {
@@ -98,6 +98,7 @@ export const logIn = async (req, res) => {
     }
 
     const { email, password } = req.body;
+
     try {
         const result = await User.findOne({ email });
         if (!result) {
@@ -113,7 +114,7 @@ export const logIn = async (req, res) => {
         const jwtToken = jwt.sign({ email, userId: result._id }, process.env.JWTSECRET)
 
         // Remove password from the response
-        const { password, ...userWithoutPassword } = result.toObject();
+       const { password: userPassword, ...userWithoutPassword } = result.toObject();
 
         return res.status(200).json({ success: true, message: "login success", user: userWithoutPassword, jwtToken });
 
