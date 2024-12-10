@@ -12,7 +12,10 @@ export const getAllUsers = async (req, res) => {
         if (!result || result.length < 1) {
             return res.status(404).json({ success: false, message: "users not found" });
         }
-        res.status(200).json({ success: true, users: result })
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = result.toObject();
+
+        res.status(200).json({ success: true, users: userWithoutPassword })
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "server error occured" });
@@ -34,7 +37,10 @@ export const getsingleUser = async (req, res) => {
         if (!result) {
             return res.status(404).json({ success: false, message: "user not found" });
         }
-        res.status(200).json({ success: true, user: result })
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = result.toObject();
+
+        res.status(200).json({ success: true, user: userWithoutPassword })
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "server error occured" });
@@ -69,7 +75,11 @@ export const signUp = async (req, res) => {
 
         const hashPass = await bcrypt.hash(password, 10);
         const result = await User.create({ userName, email, password: hashPass, avatar });
-        res.status(201).json({ success: true, message: "signUp success", user: result });
+
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = result.toObject();
+
+        res.status(201).json({ success: true, message: "signUp success", user: userWithoutPassword });
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "server error occured" });
@@ -101,7 +111,11 @@ export const logIn = async (req, res) => {
         }
 
         const jwtToken = jwt.sign({ email, userId: result._id }, process.env.JWTSECRET)
-        return res.status(200).json({ success: true, message: "login success", user: result, jwtToken });
+
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = result.toObject();
+
+        return res.status(200).json({ success: true, message: "login success", user: userWithoutPassword, jwtToken });
 
     } catch (err) {
         console.log(err);
