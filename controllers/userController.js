@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 
+// controller for get all users
+
 export const getAllUsers = async (req, res) => {
     try {
         const result = await User.find();
@@ -16,6 +18,10 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ success: false, message: "server error occured" });
     }
 }
+
+
+// controller for getting single user 
+
 export const getsingleUser = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
@@ -35,6 +41,8 @@ export const getsingleUser = async (req, res) => {
     }
 }
 
+
+// controller for user signup
 
 export const signUp = async (req, res) => {
 
@@ -68,6 +76,8 @@ export const signUp = async (req, res) => {
     }
 }
 
+// controller for user login
+
 export const logIn = async (req, res) => {
 
     if (!req.body.email) {
@@ -90,7 +100,6 @@ export const logIn = async (req, res) => {
             return res.status(403).json({ success: false, message: "invalid password" });
         }
 
-        console.log(passMatch)
         const jwtToken = jwt.sign({ email, userId: result._id }, process.env.JWTSECRET)
         return res.status(200).json({ success: true, message: "login success", user: result, jwtToken });
 

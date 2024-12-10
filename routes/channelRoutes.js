@@ -1,6 +1,9 @@
 import express from "express"
 import { createChannel, deleteChannel, getAllChannels, getmultipleChannels, getSpecificChannel, subscribeChannel, updateChannel } from "../controllers/channelController.js"
 import checkAuth from "../middlewares/checkAuth.js";
+
+// added router for channel routes
+
 const router = express.Router();
 
 router.get("/", getAllChannels);

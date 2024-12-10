@@ -1,5 +1,8 @@
 import express from "express"
 import { addComment, deleteComment, getAllComments, getSingleComment, getSingleVideoComments, updateComment } from "../controllers/commentController.js";
+
+// added router for comment routes
+
 const router = express.Router();
 
 router.get("/", getAllComments);

@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 dotenv.config();
-
+// connection function for connecting to database 
 const connectDB = async () => {
     try {
 
@@ -13,4 +13,5 @@ const connectDB = async () => {
         console.log("connection failed with error : " + err);
     }
 }
+// calling the cnnecton function
 connectDB();

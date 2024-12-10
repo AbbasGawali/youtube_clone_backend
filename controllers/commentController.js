@@ -3,6 +3,9 @@ import Comment from "../models/Comment.js";
 import User from "../models/User.js";
 import Video from "../models/Video.js";
 
+
+// controller for adding comment
+
 export const addComment = async (req, res) => {
 
     if (!req.body.description) {
@@ -43,6 +46,8 @@ export const addComment = async (req, res) => {
 }
 
 
+// controller for getting all comment
+
 export const getAllComments = async (req, res) => {
     try {
         const result = await Comment.find();
@@ -55,6 +60,8 @@ export const getAllComments = async (req, res) => {
         res.status(500).json({ success: false, message: "server error occured" });
     }
 }
+
+// controller for getting single comment
 
 export const getSingleComment = async (req, res) => {
 
@@ -76,6 +83,8 @@ export const getSingleComment = async (req, res) => {
     }
 }
 
+// controller for getting single video all comment
+
 export const getSingleVideoComments = async (req, res) => {
 
     if (!mongoose.isValidObjectId(req.params.id)) {
@@ -96,9 +105,7 @@ export const getSingleVideoComments = async (req, res) => {
     }
 }
 
-
-
-
+// controller for update comment
 
 export const updateComment = async (req, res) => {
 
@@ -134,6 +141,8 @@ export const updateComment = async (req, res) => {
         res.status(500).json({ success: false, message: "server error occured" });
     }
 }
+
+// controller for delete comment
 
 export const deleteComment = async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) {

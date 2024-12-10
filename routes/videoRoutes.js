@@ -2,6 +2,8 @@ import express from "express";
 import { addVideo, deleteVideo, disLikeVideo, getAllVideos, getSingleChannelVideos, getSingleVideo, likeVideo, searchVideo, updateVideo } from "../controllers/videoController.js"
 import checkAuth from "../middlewares/checkAuth.js";
 
+// added router for video routes
+
 const router = express.Router();
 
 router.get("/", getAllVideos);

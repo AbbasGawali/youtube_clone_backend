@@ -18,10 +18,13 @@ app.use("/api/channel", channelRoutes)
 app.use("/api/video", videoRoutes)
 app.use("/api/comment", commentRoutes)
 
+
+// added home route
 app.get("/", (req, res) => {
     res.send("welcome to Youtube_Clone backend")
 })
 
+// server running at port 
 app.listen(port, () => {
     console.log(`listening at port ${port}`)
 })
